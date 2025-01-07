@@ -5,7 +5,7 @@ import re
 
 def extract_text(new_text):
     """
-    Cleans the input text by removing specific patterns and normalizing whitespace.
+    Cleans the input text by removing specific patterns and normalising whitespace.
 
     This function performs several cleaning operations on the input text:
     - Removes verse quotations typically found in religious texts.
@@ -21,9 +21,8 @@ def extract_text(new_text):
     - str: The cleaned text, with unnecessary characters and patterns removed.
     """
     try:
-        # Retain words with apostrophes like "papa'akur", "tsa'a", "wawa'a"
-        # This regular expression allows words with apostrophes to remain intact
-        new_text = re.sub(r'\b(\w+\W\w+)\b', lambda x: x.group(), new_text)
+        # Retain words with apostrophes like "papa'akur", "tsa'a", "wawa'a" but remove the apostrophes
+        new_text = re.sub(r"\b(\w+)'(\w+)\b", r'\1\2', new_text)
 
         # Remove verse quotations like (Mat 27:1-2, 11-14; Mar 15:1-5; Yoh 18:28-38)
         new_text = re.sub(
@@ -35,6 +34,16 @@ def extract_text(new_text):
 
         # Remove multiple spaces
         new_text = re.sub(r'\s+', ' ', new_text)
+
+        chapterTitle = "TAƊƏR ALKAWAL AKU NYA HƏBA"
+        new_text = new_text.replace(chapterTitle, "")
+
+        books = [
+            "Matta", "Markus", "Luka", "Yohana", "Tlər kə'i Changhabal", "Changhabal", "Roma", "Korinti", "Galati",
+            "Afisa", "Kolosi", "Filibi", "Tasalonika", "Timtawus", "Titus", "Filimun", "Ibrani", "Yakubu", "Bitrus"
+        ]
+        for book in books:
+            new_text = re.sub(rf'\b{book}\s*\d+|\d+\s*{book}\b', '', new_text)
 
         # Remove the copyright text at the end
         copyrightText = "© Wycliffe Bible Translators, Inc. and © The Nigeria Bible Translation Trust 2018"
